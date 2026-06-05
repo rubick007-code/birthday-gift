@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🌌 Aurora Birthday - Final Magic 🌌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Courier New', 'Segoe UI', monospace;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            color: #ffd0d6;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            object-fit: cover;
+            opacity: 0.85;
+        }
+
+        .landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+        }
+
+        .landing-page.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .open-btn {
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(15px);
+            border: 2px solid #ff80aa;
+            color: #ffc0d0;
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            padding: 20px 50px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.4s;
+            box-shadow: 0 0 40px rgba(255,100,150,0.6);
+            letter-spacing: 4px;
+            animation: pulseBtn 1.8s infinite;
+            z-index: 1001;
+        }
+
+        .open-btn:hover {
+            background: #ff80aacc;
+            transform: scale(1.05);
+            box-shadow: 0 0 70px #ff80aa;
+        }
+
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 15px #ff80aa; transform: scale(1);}
+            100% { box-shadow: 0 0 50px #ffc0d0; transform: scale(1.02);}
+        }
+
+        .slider {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 10;
+        }
+
+        .slider.visible { opacity: 1; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 15;
+        }
+
+        .slide.active { opacity: 1; z-index: 20; }
+
+        .sketch-card {
+            max-width: 85%;
+            max-height: 75%;
+            width: 600px;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,200,220,0.5);
+            border-radius: 12px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            direction: rtl;
+            text-align: center;
+            scrollbar-width: thin;
+            scrollbar-color: #ff80aa #1a0a1a;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .sketch-card::-webkit-scrollbar { width: 6px; }
+        .sketch-card::-webkit-scrollbar-track { background: #1a0a1a; border-radius: 10px; }
+        .sketch-card::-webkit-scrollbar-thumb { background: #ff80aa; border-radius: 10px; }
+
+        .sketch-card::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 1.5px dashed rgba(255,150,180,0.4);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .cats-container {
+            position: fixed;
+            top: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 200;
+            pointer-events: none;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
+        }
+
+        .sleeping-cat-top { font-size: 2.8rem; animation: gentleSway 3s infinite ease-in-out; }
+        .kittens-top { display: flex; gap: 12px; font-size: 2rem; }
+        .kitten-top { animation: bounce 1s infinite alternate; }
+        .kitten-top:nth-child(1) { animation-delay: 0s; }
+        .kitten-top:nth-child(2) { animation-delay: 0.25s; }
+        .kitten-top:nth-child(3) { animation-delay: 0.5s; }
+
+        @keyframes gentleSway { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(6deg); } }
+        @keyframes bounce { 0% { transform: translateY(0px); } 100% { transform: translateY(-12px); } }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff80aa;
+            box-shadow: 0 0 25px #ff80aa;
+            margin-bottom: 15px;
+        }
+
+        canvas#effectCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 200;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: #ff80aacc;
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffc0d0;
+            color: white;
+            font-size: 1.1rem;
+            font-family: monospace;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255,128,170,0.5);
+        }
+
+        .nav-btn:hover { background: #ff6699; transform: scale(1.05); }
+        .nav-btn.hide { display: none; }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff80aa, #ffc0d0, #aa80ff, #ff80aa);
+            width: 0%;
+            transition: width 0.1s linear;
+            z-index: 200;
+            box-shadow: 0 0 15px #ff80aa;
+        }
+
+        .gift-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .gift-action-btn {
+            background: #ff80aacc;
+            border: 2px solid #ffc0d0;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-family: monospace;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+
+        .gift-action-btn:hover { background: #ff6699; transform: scale(1.02); }
+
+        .happy-text {
+            font-size: 2rem;
+            color: #ffdd99;
+            text-shadow: 0 0 15px #ff80aa;
+            animation: pulseHappy 0.5s infinite alternate;
+        }
+
+        @keyframes pulseHappy { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
+
+        canvas#animationCanvas {
+            width: 100%;
+            height: 250px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            margin: 10px 0;
+            display: block;
+            border: 1px solid #ff80aa;
+        }
+
+        .riddle-btn {
+            background: #ff80aacc;
+            border: 2px solid #ffc0d0;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-family: monospace;
+            cursor: pointer;
+            border-radius: 40px;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .riddle-btn:hover { background: #ff6699; transform: scale(1.02); }
+        
+        .boom-effect {
+            animation: boom 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+        @keyframes boom {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 30px orange; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .secret-btn {
+            background: linear-gradient(135deg, #ff80aa, #ff3366);
+            border: 2px solid #ffccdd;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-family: monospace;
+            cursor: pointer;
+            border-radius: 40px;
+            margin: 15px 0;
+            transition: 0.3s;
+            box-shadow: 0 0 25px #ff80aa;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .secret-btn:hover { transform: scale(1.02); box-shadow: 0 0 35px #ff3366; background: linear-gradient(135deg, #ff6699, #ff1144); }
+        
+        .hidden-file { display: none; margin-top: 20px; }
+        .rose-cherry { font-size: 2rem; animation: pulseRed 1.2s infinite; display: inline-block; }
+        @keyframes pulseRed { 0% { transform: scale(0.9); text-shadow: 0 0 5px #ff3377;} 100% { transform: scale(1.15); text-shadow: 0 0 30px #ff6699;} }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutScale { 0% { opacity: 0.8; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.5); } }
+
+        @media (max-width: 600px) {
+            .sketch-card { padding: 1rem; font-size: 0.85rem; max-width: 90%; max-height: 70%; }
+            .nav-btn { padding: 6px 15px; font-size: 0.8rem; }
+            .open-btn { font-size: 1.2rem; padding: 15px 30px; }
+            .profile-img { width: 60px; height: 60px; }
+            .sleeping-cat-top { font-size: 2rem; }
+            .kittens-top { font-size: 1.4rem; gap: 8px; }
+            canvas#animationCanvas { height: 200px; }
+            .secret-btn { font-size: 0.8rem; padding: 8px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="https://uploadkon.ir/uploads/fdfc05_26PREVIEW-Heart-Eyes-1-.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bgMusic" loop autoplay>
+        <source src="https://uploadkon.ir/uploads/ea9305_26White-Mustang-Lana-Del-Rey.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="cats-container">
+        <div class="sleeping-cat-top">🐱💤</div>
+        <div class="kittens-top">
+            <span class="kitten-top">🐱</span>
+            <span class="kitten-top">🐱</span>
+            <span class="kitten-top">🐱</span>
+        </div>
+    </div>
+
+    <div class="landing-page" id="landingPage">
+        <button class="open-btn" id="openDocsBtn">📁 OPEN THE DOCS :)))) 📁</button>
+    </div>
+
+    <div class="slider" id="slider">
+        <div class="slide" id="slide0">
+            <div class="sketch-card" id="card0">
+                <div id="typing0" style="text-align: left; direction: ltr;"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide1">
+            <div class="sketch-card" id="card1">
+                <div id="moonText" style="font-size: 1.15rem; line-height: 1.9rem; text-align: center; direction: rtl;"></div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide2">
+            <div class="sketch-card" id="card2" style="text-align: center; direction: ltr;">
+                <div id="riddleArea">
+                    <div style="font-size: 1.4rem; margin-bottom: 20px;">🔮 RIDDLE FOR YOU 🔮</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; margin: 15px 0;">What do you call a sleeping dinosaur?</div>
+                    <button class="riddle-btn" id="revealRiddleBtn">what? 💣</button>
+                    <div id="riddleAnswer" style="margin-top: 25px; font-size: 1.3rem; min-height: 120px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide3">
+            <div class="sketch-card" id="card3">
+                <div id="giftGameArea">
+                    <canvas id="animationCanvas" width="500" height="250"></canvas>
+                    <div id="giftMessage" style="margin: 10px 0;">✨ یه آدمک با یه کادوی قشنگ اومده... ✨</div>
+                    <div class="gift-buttons" id="giftButtons">
+                        <button class="gift-action-btn" id="slapBtn">BISSSMILLLAAAH ===> TAMPOOOOOOOOLLLLLLLL</button>
+                        <button class="gift-action-btn" id="takeGiftBtn">TAKE THE GIFT :)</button>
+                    </div>
+                    <div id="giftResult" style="margin-top: 20px; min-height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide4">
+            <div class="sketch-card" id="card4">
+                <div style="font-size: 1.8rem;">🎉 HAPPY BIRTHDAY 🎉</div>
+                <p style="margin-top: 20px; font-size: 1.1rem;">امیدوارم امسال پر از اتفاق‌های خوب،<br> خنده‌های واقعی، و خاطره‌هایی باشد<br> که هرگز فراموش نشوند.</p>
+                <div style="margin-top: 20px; font-size: 1.8rem;">🌙✨🐱💫</div>
+                
+                <div id="secretArea" style="margin-top: 25px;">
+                    <button class="secret-btn" id="openSecretBtn">📁 OPEN SECRET FILE 📁</button>
+                    <div id="secretMessage" class="hidden-file" style="font-size: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="effectCanvas"></canvas>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="nav-buttons">
+        <button class="nav-btn" id="backBtn">◀ BACK</button>
+        <button class="nav-btn" id="nextBtn">NEXT ▶</button>
+    </div>
+
+    <script>
+        const CRUSH_IMAGE_URL = "https://uploadkon.ir/uploads/4d6805_26photo27606242865.jpg"; 
+
+        let currentSlide = 0;
+        let isTypingComplete = [false, false, false, false, false];
+        let renderedTexts = ["", "", "", "", ""];
+        
+        let giftGameLocked = false;
+        let giftTaken = false;
+        let animationId = null;
+        let canvas, ctx;
+        let girlX = 120, girlY = 130;  // دختر بالا و مایل
+        let boyX = 350, boyY = 150;
+        let carCrash = false;
+        let carX = 500, carY = 140;  // ماشین از راست، در ارتفاع 140 (بین دختر و پسر)
+        let giftAccepted = false;
+        let girlLaughing = false;
+        
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressBar = document.getElementById('progressBar');
+        const nextBtn = document.getElementById('nextBtn');
+        const backBtn = document.getElementById('backBtn');
+        let particleActive = false;
+        let particleCanvas, particleCtx;
+
+        function updateProgress() {
+            if(currentSlide < totalSlides - 1 && isTypingComplete[currentSlide] === true) {
+                progressBar.style.width = '100%';
+            } else {
+                progressBar.style.width = '0%';
+            }
+        }
+
+        function updateNavButtons() {
+            if(currentSlide === 0) backBtn.classList.add('hide');
+            else backBtn.classList.remove('hide');
+            
+            if(currentSlide === totalSlides - 1) {
+                nextBtn.classList.add('hide');
+            } else {
+                if(currentSlide === 3 && giftTaken === false) {
+                    nextBtn.classList.add('hide');
+                } else if(isTypingComplete[currentSlide] === true) {
+                    nextBtn.classList.remove('hide');
+                } else {
+                    nextBtn.classList.add('hide');
+                }
+            }
+        }
+
+        function nextSlide() {
+            if(currentSlide < totalSlides-1 && (currentSlide !==3 || giftTaken===true) && isTypingComplete[currentSlide]===true) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        backBtn.addEventListener('click', prevSlide);
+
+        function autoScrollToBottom(element) {
+            setTimeout(() => {
+                element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+            }, 30);
+        }
+
+        async function typewriterInElement(element, htmlText, speedMs, slideIndex, cardElement) {
+            if(renderedTexts[slideIndex] === htmlText && element.innerHTML !== "") {
+                isTypingComplete[slideIndex] = true;
+                updateProgress(); updateNavButtons();
+                return;
+            }
+            renderedTexts[slideIndex] = htmlText;
+            element.innerHTML = '';
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlText;
+            
+            async function renderNodes(nodes, parentElement) {
+                for (const node of nodes) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const text = node.textContent;
+                        for (let i = 0; i < text.length; i++) {
+                            parentElement.innerHTML += text[i];
+                            await new Promise(r => setTimeout(r, speedMs));
+                            autoScrollToBottom(cardElement);
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        const tagName = node.tagName.toLowerCase();
+                        if (tagName === 'br') {
+                            parentElement.innerHTML += '<br>';
+                            await new Promise(r => setTimeout(r, speedMs * 0.5));
+                            autoScrollToBottom(cardElement);
+                        } else {
+                            const newElement = document.createElement(tagName);
+                            if (node.attributes) {
+                                for (let attr of node.attributes) {
+                                    newElement.setAttribute(attr.name, attr.value);
+                                }
+                            }
+                            parentElement.appendChild(newElement);
+                            await renderNodes(Array.from(node.childNodes), newElement);
+                        }
+                    }
+                }
+            }
+            await renderNodes(Array.from(tempDiv.childNodes), element);
+            isTypingComplete[slideIndex] = true;
+            updateProgress(); updateNavButtons();
+        }
+
+        const moonPoem = `بعضی چیزها را نباید اسم برد...<br>مثل ماه.<br><br>ماه که جادو دارد،<br>اما هیچ کس رمزش را نمی‌داند.<br><br>ماه را که ندانی اسمش چیست،<br>اما هر شب نگاهش می‌کنی،<br>می‌دانی هست،<br>می‌دانی بی‌صدا می‌درخشد،<br>می‌دانی بدونش،<br>شب یعنی دلتنگی...<br><br>تو برای کسی،<br>همان ماهی.<br>نه هر ماه...<br>آن ماه بی‌نظیر،<br>آن ماه نایاب،<br>آن ماه که حتی در میان شلوغی روز،<br>یادش دلت را آرام می‌کند.<br><br>همان جادوی خاص،<br>همان که آدم را بی‌اختیار می‌کند،<br>همان که دلت می‌خواهد همیشه باشد.<br><br>امروز روز تولد آن ماه است.<br>تولد آن که باید ازش گفت،<br>اما کلمات کم می‌آورند<br>زبان که از آن قاصر است.<br><br>تولد تو.`;
+
+        async function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            updateNavButtons(); updateProgress(); startLightEffects(index);
+            const cardElement = document.querySelector(`#slide${index} .sketch-card`);
+            
+            if (index === 0) {
+                let img = '';
+                if(CRUSH_IMAGE_URL && CRUSH_IMAGE_URL !== "") {
+                    img = `<div style="text-align:center;"><img src="${CRUSH_IMAGE_URL}" class="profile-img" alt="profile" onerror="this.style.display='none'"></div>`;
+                }
+                const dbText = img + '> ACCESSING DATABASE...<br>> Searching...<br>> 1 MATCH FOUND<br><br><span style="color:#ff99bb;">✨ Status: <span style="color:#ffccdd;">INIMITABLE</span><br>🌙 Effect on system: UNEXPLAINABLE<br>📅 Birthday: TODAY</span>';
+                await typewriterInElement(document.getElementById('typing0'), dbText, 76, 0, cardElement);
+            }
+            if (index === 1) {
+                let img = ''; if(CRUSH_IMAGE_URL && CRUSH_IMAGE_URL !== "") img = `<div><img src="${CRUSH_IMAGE_URL}" class="profile-img" alt="profile" onerror="this.style.display='none'"></div>`;
+                await typewriterInElement(document.getElementById('moonText'), img + moonPoem, 90, 1, cardElement);
+            }
+            if (index === 2) {
+                isTypingComplete[2] = true;
+                updateNavButtons();
+                setupRiddle();
+            }
+            if (index === 3) {
+                isTypingComplete[3] = true; 
+                updateNavButtons(); 
+                setupGiftGame(); 
+            }
+            if (index === 4) {
+                isTypingComplete[4] = true;
+                updateNavButtons();
+                
+                const secretBtn = document.getElementById('openSecretBtn');
+                const secretMsgDiv = document.getElementById('secretMessage');
+                if(secretBtn && secretMsgDiv) {
+                    const newSecretBtn = secretBtn.cloneNode(true);
+                    secretBtn.parentNode.replaceChild(newSecretBtn, secretBtn);
+                    newSecretBtn.onclick = () => {
+                        if(secretMsgDiv.classList.contains('hidden-file')) {
+                            secretMsgDiv.classList.remove('hidden-file');
+                            secretMsgDiv.innerHTML = `
+                                <div style="border-left:3px solid #ff80aa; padding:15px; animation:fadeIn 1s; text-align:right; background:rgba(0,0,0,0.6); border-radius:15px; box-shadow: 0 0 20px #ff80aa;">
+                                    <span style="color:#ff99bb;">🔒 محرمانه 🔒</span><br><br>
+                                    راستش... بین این همه آدم روی زمین...<br>
+                                    تو یکی از آن آدم‌هایی هستی که حضورشان<br> حال و هوای روز را بهتر می‌کند.<br><br>
+                                    <span style="color:#ff99bb;">✨ یادت نرود... بعضی آدم‌ها فراموش‌نشدنی‌اند. ✨</span><br><br>
+                                    <div style="background:rgba(255,255,255,0.1); padding:15px; border-radius:15px; margin:10px 0;">
+                                        بنی آدم اعضای یکدیگرند<br>
+                                        که در آفرینش تیریا سرترن<br>
+                                        😎😎👍
+                                    </div>
+                                    <div style="font-size:1.1rem; color:#ffaa88; margin:10px 0;">
+                                        اگه امروز کسی بیشتر از بقیه خوشحال باشه که تولدته... تعجب نکن. 😎✨
+                                    </div>
+                                    <div style="font-size:1.2rem; color:#ffaa88;">فدامدا بی ادا ;)</div>
+                                    <div style="margin-top:10px;">🌙 <span class="rose-cherry">🌹</span> 🌙</div>
+                                </div>
+                            `;
+                            startFinalParticles();
+                        }
+                    };
+                }
+            }
+        }
+
+        function setupRiddle() {
+            const revealBtn = document.getElementById('revealRiddleBtn');
+            const answerDiv = document.getElementById('riddleAnswer');
+            if(!revealBtn) return;
+            revealBtn.onclick = () => {
+                answerDiv.classList.add('boom-effect');
+                const laughEmojis = '😆 '.repeat(20);
+                answerDiv.innerHTML = `<div style="background:rgba(255,100,100,0.3); padding:15px; border-radius:20px;">💥 BOOM! 💥<br><span style="font-size:1.8rem; font-weight:bold;">a dino-snore</span><br><div style="font-size:1.4rem; margin-top:10px;">${laughEmojis}</div></div>`;
+                setTimeout(() => answerDiv.classList.remove('boom-effect'), 500);
+                
+                for(let i=0;i<40;i++) {
+                    setTimeout(()=>{
+                        let b = document.createElement('div');
+                        b.innerHTML = ['💥','🔥','💣','✨','🎉'][Math.floor(Math.random()*5)];
+                        b.style.position = 'fixed';
+                        b.style.left = Math.random() * 100 + '%';
+                        b.style.top = Math.random() * 100 + '%';
+                        b.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                        b.style.animation = 'fadeOutScale 0.8s forwards';
+                        b.style.pointerEvents = 'none';
+                        b.style.zIndex = '500';
+                        document.body.appendChild(b);
+                        setTimeout(()=>b.remove(), 800);
+                    }, i*40);
+                }
+            };
+        }
+
+        // ========== انیمیشن ماشین مورب ==========
+        function drawCharacter(x, y, isGirl, isHappy, isCrushed, armRaised, isLaughing) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            if(isCrushed) {
+                ctx.fillStyle = '#8888aa';
+                ctx.beginPath(); ctx.ellipse(0, -15, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#666688';
+                ctx.beginPath(); ctx.ellipse(0, -5, 15, 5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-8, -22); ctx.lineTo(-2, -28); ctx.moveTo(-2, -22); ctx.lineTo(-8, -28); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(2, -22); ctx.lineTo(8, -28); ctx.moveTo(8, -22); ctx.lineTo(2, -28); ctx.stroke();
+            } else {
+                ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2);
+                ctx.strokeStyle = '#ffc0d0'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.fillStyle = '#ffc0d0';
+                ctx.beginPath(); ctx.arc(-6, -25, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6, -25, 2, 0, Math.PI*2); ctx.fill();
+                
+                if(isLaughing) {
+                    ctx.beginPath(); ctx.arc(0, -15, 8, 0.1, Math.PI - 0.1); ctx.stroke();
+                    ctx.fillStyle = '#ffaaaa';
+                    ctx.beginPath(); ctx.ellipse(-12, -28, 4, 6, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(12, -28, 4, 6, 0, 0, Math.PI*2); ctx.fill();
+                } else if(isHappy) {
+                    ctx.beginPath(); ctx.arc(0, -15, 8, 0.1, Math.PI - 0.1); ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.arc(0, -15, 8, 0, Math.PI); ctx.stroke();
+                }
+            }
+            
+            if(isGirl && !isCrushed) {
+                ctx.fillStyle = '#ff80aa';
+                ctx.beginPath(); ctx.ellipse(0, -38, 8, 10, 0, 0, Math.PI*2); ctx.fill();
+            }
+            
+            if(!isCrushed) {
+                ctx.beginPath(); ctx.moveTo(-10, -5); ctx.lineTo(10, -5); ctx.stroke();
+                if(armRaised) {
+                    ctx.beginPath(); ctx.moveTo(-10, -5); ctx.lineTo(-20, -25); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(10, -5); ctx.lineTo(20, -25); ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.moveTo(-10, -5); ctx.lineTo(-15, 0); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(10, -5); ctx.lineTo(15, 0); ctx.stroke();
+                }
+                ctx.beginPath(); ctx.moveTo(-8, 5); ctx.lineTo(0, 15); ctx.lineTo(8, 5); ctx.stroke();
+                if(isGirl && !isCrushed) {
+                    ctx.fillStyle = '#ffaaaa';
+                    ctx.beginPath(); ctx.ellipse(-10, -28, 3, 4, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(10, -28, 3, 4, 0, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            ctx.restore();
+        }
+        
+        function drawGift(x, y) {
+            ctx.fillStyle = '#ff99bb';
+            ctx.fillRect(x-12, y-8, 24, 16);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x-4, y-12, 8, 8);
+        }
+        
+        function drawCar(x, y) {
+            ctx.fillStyle = '#ff4444';
+            ctx.fillRect(x-20, y-10, 40, 20);
+            ctx.fillStyle = '#222';
+            ctx.beginPath(); ctx.arc(x-12, y+2, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x+12, y+2, 6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ffcc00';
+            ctx.fillRect(x-5, y-18, 10, 10);
+            ctx.fillStyle = '#aaa';
+            ctx.beginPath(); ctx.ellipse(x-25, y-5, 8, 5, 0, 0, Math.PI*2); ctx.fill();
+        }
+        
+        function animate() {
+            if(!canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if(giftAccepted) {
+                drawCharacter(150, 150, true, true, false, false, false);
+                drawCharacter(350, 150, false, true, false, false, false);
+                ctx.fillStyle = '#ffdd99'; ctx.font = 'bold 20px monospace'; ctx.fillText('HAPPPYYYYYY', 200, 80);
+                ctx.font = '18px monospace'; ctx.fillStyle = '#ffaa88'; ctx.fillText('مبارکت باشه 🎁😄', 180, 110);
+                for(let i=0;i<20;i++) { ctx.fillStyle = `hsl(${Date.now()/10 + i*30}, 100%, 60%)`; ctx.fillRect(100 + i*15, 50, 5, 5); }
+            }
+            else if(carCrash) {
+                drawCar(carX, carY);
+                drawCharacter(girlX, girlY, true, false, false, false, true);
+                drawCharacter(boyX-30, boyY, false, false, true, false, false);
+                
+                if(girlLaughing) {
+                    ctx.fillStyle = '#ffdd99'; ctx.font = 'bold 18px monospace'; ctx.fillText('😂😂😂', girlX-20, girlY-40);
+                }
+                
+                if(carX > 250) {
+                    carX -= 6;
+                } else if(!girlLaughing) {
+                    girlLaughing = true;
+                    setTimeout(() => { 
+                        carCrash = false; 
+                        cancelAnimation(); 
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                    }, 1500);
+                }
+            }
+            else {
+                drawCharacter(girlX, girlY, true, false, false, false, false);
+                drawCharacter(boyX, boyY, false, false, false, true, false);
+                drawGift(boyX+15, boyY-5);
+                if(Math.sin(Date.now()/200) > 0) ctx.fillStyle = '#ffaa88'; ctx.font = '14px monospace'; ctx.fillText('🎁 بگیر 🎁', boyX+5, boyY-35);
+            }
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        function cancelAnimation() { if(animationId) cancelAnimationFrame(animationId); animationId=null; }
+        
+        function setupGiftGame() {
+            canvas = document.getElementById('animationCanvas');
+            if(!canvas) return;
+            canvas.width = 500; canvas.height = 250;
+            ctx = canvas.getContext('2d');
+            girlX = 120; girlY = 130;
+            boyX = 350; boyY = 150;
+            carCrash=false; giftAccepted=false; girlLaughing=false;
+            carX = 500; carY = 140;
+            if(animationId) cancelAnimationFrame(animationId);
+            animate();
+            
+            const slapBtn = document.getElementById('slapBtn');
+            const takeBtn = document.getElementById('takeGiftBtn');
+            const giftResultDiv = document.getElementById('giftResult');
+            giftTaken = false; giftGameLocked = false;
+            if(giftResultDiv) giftResultDiv.innerHTML = '';
+            
+            if(slapBtn) {
+                const newSlapBtn = slapBtn.cloneNode(true);
+                slapBtn.parentNode.replaceChild(newSlapBtn, slapBtn);
+                newSlapBtn.onclick = () => {
+                    if(giftGameLocked || giftAccepted) return;
+                    giftGameLocked = true;
+                    carCrash = true; 
+                    carX = 500;
+                    girlLaughing = false;
+                };
+            }
+            
+            if(takeBtn) {
+                const newTakeBtn = takeBtn.cloneNode(true);
+                takeBtn.parentNode.replaceChild(newTakeBtn, takeBtn);
+                newTakeBtn.onclick = () => {
+                    if(giftGameLocked || giftAccepted) return;
+                    giftGameLocked = true;
+                    giftAccepted = true; 
+                    giftTaken = true;
+                    if(giftResultDiv) giftResultDiv.innerHTML = '<div class="happy-text">🎉 HAPPPYYYYYYYY 🎉</div><div style="color:#aaffdd;">مبارکت باشه 🎁😄</div>';
+                    updateNavButtons(); 
+                    startConfettiBurst();
+                };
+            }
+        }
+        
+        function startConfettiBurst() {
+            for(let i=0;i<80;i++) {
+                setTimeout(()=>{
+                    let c=document.createElement('div');
+                    c.innerHTML=['🎉','✨','🎁','🌸','🌙','❤️'][Math.floor(Math.random()*6)];
+                    c.style.position='fixed';
+                    c.style.left=Math.random()*100+'%';
+                    c.style.top='50%';
+                    c.style.fontSize=(Math.random()*25+15)+'px';
+                    c.style.animation='floatUp 1.5s forwards';
+                    c.style.pointerEvents='none';
+                    c.style.zIndex='300';
+                    document.body.appendChild(c);
+                    setTimeout(()=>c.remove(),1500);
+                }, i*40);
+            }
+        }
+        
+        let particles = [];
+        function startBouncingParticles() {
+            if(particleActive) return;
+            particleCanvas = document.getElementById('effectCanvas');
+            if(!particleCanvas) return;
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            particleCtx = particleCanvas.getContext('2d');
+            particles = [];
+            const icons = ['🌙','✨','⭐','💫','🐱','❤️','🌹'];
+            for(let i=0;i<28;i++) {
+                particles.push({
+                    x: Math.random()*particleCanvas.width, y: Math.random()*particleCanvas.height,
+                    vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2,
+                    icon: icons[Math.floor(Math.random()*icons.length)],
+                    size: Math.random()*18+14, opacity: Math.random()*0.5+0.3
+                });
+            }
+            particleActive = true;
+            function draw() {
+                if(!particleActive || !particleCtx) return;
+                particleCtx.clearRect(0,0,particleCanvas.width,particleCanvas.height);
+                for(let p of particles) {
+                    particleCtx.font = `${p.size}px "Segoe UI Emoji"`;
+                    particleCtx.globalAlpha = p.opacity;
+                    particleCtx.fillText(p.icon, p.x, p.y);
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x<0||p.x>particleCanvas.width) p.vx*=-0.98;
+                    if(p.y<0||p.y>particleCanvas.height) p.vy*=-0.98;
+                    p.x=Math.min(Math.max(p.x,0),particleCanvas.width);
+                    p.y=Math.min(Math.max(p.y,0),particleCanvas.height);
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        function startLightEffects(idx) {
+            if(idx===0) lightSparks('💫',12);
+            if(idx===1) lightSparks('🌙',15);
+            if(idx===2) { starRain(20); lightSparks('✨',12); }
+            if(idx===3) lightSparks('🎁',15);
+            if(idx===4) { lightSparks('🌹',15); lightSparks('🎉',10); }
+        }
+        
+        function lightSparks(icon, count) {
+            for(let i=0;i<count;i++) {
+                setTimeout(()=>{
+                    let s=document.createElement('div');
+                    s.style.position='fixed';
+                    s.style.left=Math.random()*100+'%';
+                    s.style.top=Math.random()*100+'%';
+                    s.style.fontSize=(Math.random()*22+14)+'px';
+                    s.style.opacity='0.6';
+                    s.style.pointerEvents='none';
+                    s.style.zIndex='90';
+                    s.innerHTML=icon;
+                    s.style.animation='fadeOutScale 1.5s forwards';
+                    document.body.appendChild(s);
+                    setTimeout(()=>s.remove(),1500);
+                }, i*70);
+            }
+        }
+        
+        function starRain(count) {
+            for(let i=0;i<count;i++) {
+                setTimeout(()=>{
+                    let s=document.createElement('div');
+                    s.innerHTML=['⭐','✨','💫','🌙'][Math.floor(Math.random()*4)];
+                    s.style.position='fixed';
+                    s.style.left=Math.random()*100+'%';
+                    s.style.top='-20px';
+                    s.style.fontSize=(Math.random()*18+12)+'px';
+                    s.style.animation=`floatUp ${Math.random()*2+2}s linear forwards`;
+                    s.style.pointerEvents='none';
+                    s.style.zIndex='90';
+                    s.style.opacity=0.6;
+                    document.body.appendChild(s);
+                    setTimeout(()=>s.remove(),3000);
+                }, i*50);
+            }
+        }
+        
+        function startFinalParticles() {
+            for(let i=0;i<60;i++) {
+                setTimeout(()=>{
+                    let p=document.createElement('div');
+                    p.innerHTML=['🌙','🌹','❤️','✨','🐱'][Math.floor(Math.random()*5)];
+                    p.style.position='fixed';
+                    p.style.left=Math.random()*100+'%';
+                    p.style.bottom='-20px';
+                    p.style.fontSize=(Math.random()*22+14)+'px';
+                    p.style.animation=`floatUp ${Math.random()*3+3}s forwards`;
+                    p.style.pointerEvents='none';
+                    p.style.zIndex='300';
+                    document.body.appendChild(p);
+                    setTimeout(()=>p.remove(),4000);
+                }, i*50);
+            }
+        }
+        
+        document.getElementById('openDocsBtn').addEventListener('click', () => {
+            document.getElementById('landingPage').classList.add('hide');
+            document.getElementById('slider').classList.add('visible');
+            showSlide(0);
+            startBouncingParticles();
+            lightSparks('✨',20);
+            let music = document.getElementById('bgMusic');
+            music.volume = 0.4;
+            music.play().catch(e => console.log("Audio play failed:", e));
+        });
+        
+        window.addEventListener('resize', () => {
+            if(particleCanvas) { particleCanvas.width=window.innerWidth; particleCanvas.height=window.innerHeight; }
+        });
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes floatUp {
+                0% { transform: translateY(0) rotate(0deg); opacity: 0.7; bottom: -20px;}
+                100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; bottom: 110%;}
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>
